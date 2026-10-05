@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>OpenProject Time Sheet Automation</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef4ff,
+                    #f8f5ff,
+                    #eefcf8
+                );
+
+            min-height: 100vh;
+
+            color: #1f2937;
+        }
+
+
+        /* =========================================
+           MAIN CONTAINER
+        ========================================= */
+
+        .container {
+
+            width: 94%;
+
+            max-width: 1150px;
+
+            margin: 30px auto 50px;
+
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
+        .header {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f46e5,
+                    #7c3aed,
+                    #2563eb
+                );
+
+            color: white;
+
+            padding: 30px 35px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 35px rgba(79, 70, 229, 0.25);
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+
+        .header::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 220px;
+
+            height: 220px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,0.08);
+
+            right: -60px;
+
+            top: -80px;
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            font-size: 30px;
+
+            font-weight: 700;
+
+            position: relative;
+
+            z-index: 1;
+        }
+
+
+        .header p {
+
+            margin: 8px 0 0;
+
+            opacity: 0.9;
+
+            font-size: 15px;
+
+            position: relative;
+
+            z-index: 1;
+        }
+
+
+        /* =========================================
+           CARD
+        ========================================= */
+
+        .card {
+
+            background: rgba(255,255,255,0.95);
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            margin-top: 20px;
+
+            box-shadow:
+                0 8px 25px rgba(31,41,55,0.08);
+
+            border: 1px solid
+                rgba(255,255,255,0.8);
+        }
+
+
+        .card-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            margin-bottom: 18px;
+        }
+
+
+        .icon {
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 19px;
+
+            background: #eef2ff;
+        }
+
+
+        /* =========================================
+           UPLOAD AREA
+        ========================================= */
+
+        .upload-area {
+
+            border: 2px dashed #b8c4e8;
+
+            border-radius: 15px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #fafbff,
+                    #f4f6ff
+                );
+
+            transition: all .25s;
+        }
+
+
+        .upload-area:hover {
+
+            border-color: #6366f1;
+
+            background: #f4f3ff;
+        }
+
+
+        .upload-icon {
+
+            width: 65px;
+
+            height: 65px;
+
+            margin: auto;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 30px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #8b5cf6
+                );
+
+            color: white;
+
+            box-shadow:
+                0 8px 20px
+                rgba(99,102,241,.3);
+        }
+
+
+        .upload-area h3 {
+
+            margin: 15px 0 5px;
+
+            font-size: 17px;
+        }
+
+
+        .upload-area p {
+
+            margin: 0 0 18px;
+
+            color: #6b7280;
+
+            font-size: 14px;
+        }
+
+
+        input[type="file"] {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            border: 1px solid #d6dbea;
+
+            background: white;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================================
+           BUTTONS
+        ========================================= */
+
+        .buttons {
+
+            display: flex;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-top: 18px;
+        }
+
+
+        button,
+        .download-btn {
+
+            border: none;
+
+            padding: 12px 20px;
+
+            border-radius: 10px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            transition: all .2s;
+        }
+
+
+        .download-btn {
+
+            background: #ecfdf5;
+
+            color: #047857;
+
+            border: 1px solid #a7f3d0;
+        }
+
+
+        .download-btn:hover {
+
+            background: #d1fae5;
+
+            transform: translateY(-1px);
+        }
+
+
+        #submitButton {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f46e5,
+                    #7c3aed
+                );
+
+            color: white;
+
+            box-shadow:
+                0 7px 18px
+                rgba(79,70,229,.25);
+        }
+
+
+        #submitButton:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 10px 22px
+                rgba(79,70,229,.35);
+        }
+
+
+        #submitButton:disabled {
+
+            background: #9ca3af;
+
+            cursor: not-allowed;
+
+            box-shadow: none;
+
+            transform: none;
+        }
+
+
+        /* =========================================
+           MESSAGE
+        ========================================= */
+
+        #message {
+
+            margin-top: 15px;
+
+            padding: 12px 15px;
+
+            border-radius: 10px;
+
+            display: none;
+
+            font-weight: 600;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================================
+           STATUS HEADER
+        ========================================= */
+
+        .status-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+        }
+
+
+        .status-badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 8px 14px;
+
+            border-radius: 30px;
+
+            background: #eef2ff;
+
+            color: #4f46e5;
+
+            font-weight: 700;
+
+            font-size: 13px;
+        }
+
+
+        .status-dot {
+
+            width: 9px;
+
+            height: 9px;
+
+            border-radius: 50%;
+
+            background: #6366f1;
+
+            animation: pulse 1.5s infinite;
+        }
+
+
+        @keyframes pulse {
+
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .4;
+                transform: scale(1.25);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+        }
+
+
+        /* =========================================
+           LOGIN STATUS
+        ========================================= */
+
+        .login-status {
+
+            margin-top: 18px;
+
+            padding: 14px 17px;
+
+            border-radius: 12px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           STAT CARDS
+        ========================================= */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+            margin-top: 18px;
+        }
+
+
+        .stat-card {
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            color: white;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+
+        .stat-card::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 90px;
+
+            height: 90px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,.12);
+
+            right: -25px;
+
+            bottom: -35px;
+        }
+
+
+        .stat-title {
+
+            font-size: 13px;
+
+            opacity: .9;
+        }
+
+
+        .stat-value {
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+            margin-top: 5px;
+        }
+
+
+        .total {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #3b82f6
+                );
+        }
+
+
+        .passed {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #059669,
+                    #10b981
+                );
+        }
+
+
+        .failed {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #dc2626,
+                    #ef4444
+                );
+        }
+
+
+        .pending {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #d97706,
+                    #f59e0b
+                );
+        }
+
+
+        /* =========================================
+           PROGRESS
+        ========================================= */
+
+        .progress-section {
+
+            margin-top: 22px;
+        }
+
+
+        .progress-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 8px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+
+        .progress-background {
+
+            width: 100%;
+
+            height: 16px;
+
+            background: #e5e7eb;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+
+        #progressBar {
+
+            height: 100%;
+
+            width: 0%;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #4f46e5,
+                    #8b5cf6,
+                    #06b6d4
+                );
+
+            transition:
+                width .5s ease;
+        }
+
+
+        /* =========================================
+           LOGS
+        ========================================= */
+
+        .logs-container {
+
+            margin-top: 25px;
+        }
+
+
+        .logs-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 10px;
+        }
+
+
+        .logs {
+
+            height: 350px;
+
+            overflow-y: auto;
+
+            padding: 18px;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #111827,
+                    #1f2937
+                );
+
+            color: #e5e7eb;
+
+            font-family:
+                Consolas,
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
+
+            line-height: 1.8;
+
+            white-space: pre-wrap;
+
+            box-shadow:
+                inset 0 0 20px
+                rgba(0,0,0,.25);
+        }
+
+
+        .logs::-webkit-scrollbar {
+
+            width: 8px;
+        }
+
+
+        .logs::-webkit-scrollbar-thumb {
+
+            background: #4b5563;
+
+            border-radius: 10px;
+        }
+
+
+        /* =========================================
+           HIDDEN
+        ========================================= */
+
+        #statusSection {
+
+            display: none;
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 800px) {
+
+            .stats {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .container {
+
+                width: 95%;
+
+                margin-top: 15px;
+            }
+
+
+            .header {
+
+                padding: 24px;
+
+                border-radius: 15px;
+            }
+
+
+            .header h1 {
+
+                font-size: 23px;
+            }
+
+
+            .stats {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .card {
+
+                padding: 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =========================================
+         HEADER
+    ========================================= -->
+
+    <div class="header">
+
+        <h1>
+            🚀 OpenProject Time Sheet Automation
+        </h1>
+
+        <p>
+            Upload your Excel file and automatically
+            log time entries into OpenProject.
+        </p>
+
+    </div>
+
+
+    <!-- =========================================
+         SAMPLE + UPLOAD
+    ========================================= -->
+
+    <div class="card">
+
+        <div class="card-title">
+
+            <div class="icon">
+                📁
+            </div>
+
+            Excel File
+
+        </div>
+
+
+        <div class="upload-area">
+
+            <div class="upload-icon">
+                📤
+            </div>
+
+            <h3>
+                Upload Time Sheet
+            </h3>
+
+            <p>
+                Select an Excel (.xlsx) file containing
+                Login Details and Time Sheet.
+            </p>
+
+
+            <input
+                type="file"
+                id="fileInput"
+                accept=".xlsx"
+            />
+
+
+            <div class="buttons">
+
+                <a
+                    href="/static/openproject_timesheet_sample.xlsx"
+                    download
+                    class="download-btn"
+                >
+                    📥 Download Sample Excel
+                </a>
+
+
+                <button
+                    id="submitButton"
+                >
+                    🚀 Start Automation
+                </button>
+
+            </div>
+
+
+            <div id="message"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         LIVE STATUS
+    ========================================= -->
+
+    <div
+        class="card"
+        id="statusSection"
+    >
+
+        <div class="status-header">
+
+            <div class="card-title">
+
+                <div class="icon">
+                    📊
+                </div>
+
+                Automation Progress
+
+            </div>
+
+
+            <div class="status-badge">
+
+                <span
+                    class="status-dot"
+                    id="statusDot"
+                ></span>
+
+                <span id="jobStatus">
+                    QUEUED
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGIN -->
+
+        <div
+            class="login-status"
+            id="loginStatus"
+        >
+            🔐 Login: Pending
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats">
+
+
+            <div class="stat-card total">
+
+                <div class="stat-title">
+                    Total Records
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="totalCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card passed">
+
+                <div class="stat-title">
+                    Successfully Logged
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="passedCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card failed">
+
+                <div class="stat-title">
+                    Failed
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="failedCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card pending">
+
+                <div class="stat-title">
+                    Pending
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="pendingCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROGRESS -->
+
+        <div class="progress-section">
+
+            <div class="progress-header">
+
+                <span>
+                    Overall Progress
+                </span>
+
+                <span id="progressText">
+                    0%
+                </span>
+
+            </div>
+
+
+            <div class="progress-background">
+
+                <div
+                    id="progressBar"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGS -->
+
+        <div class="logs-container">
+
+            <div class="logs-header">
+
+                <strong>
+                    📝 Live Automation Logs
+                </strong>
+
+                <span>
+                    Real-time
+                </span>
+
+            </div>
+
+
+            <div
+                class="logs"
+                id="logs"
+            >
+                Waiting for automation to start...
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+    const fileInput =
+        document.getElementById(
+            "fileInput"
+        );
+
+
+    const submitButton =
+        document.getElementById(
+            "submitButton"
+        );
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    const statusSection =
+        document.getElementById(
+            "statusSection"
+        );
+
+
+    const jobStatus =
+        document.getElementById(
+            "jobStatus"
+        );
+
+
+    const statusDot =
+        document.getElementById(
+            "statusDot"
+        );
+
+
+    const loginStatus =
+        document.getElementById(
+            "loginStatus"
+        );
+
+
+    const totalCount =
+        document.getElementById(
+            "totalCount"
+        );
+
+
+    const passedCount =
+        document.getElementById(
+            "passedCount"
+        );
+
+
+    const failedCount =
+        document.getElementById(
+            "failedCount"
+        );
+
+
+    const pendingCount =
+        document.getElementById(
+            "pendingCount"
+        );
+
+
+    const progressBar =
+        document.getElementById(
+            "progressBar"
+        );
+
+
+    const progressText =
+        document.getElementById(
+            "progressText"
+        );
+
+
+    const logs =
+        document.getElementById(
+            "logs"
+        );
+
+
+    let polling = null;
+
+
+    /*
+     * =========================================
+     * SHOW MESSAGE
+     * =========================================
+     */
+
+    function showMessage(
+        text,
+        type
+    ) {
+
+        message.style.display =
+            "block";
+
+        message.textContent =
+            text;
+
+
+        if (type === "success") {
+
+            message.style.background =
+                "#ecfdf5";
+
+            message.style.color =
+                "#047857";
+
+        }
+        else if (type === "error") {
+
+            message.style.background =
+                "#fef2f2";
+
+            message.style.color =
+                "#b91c1c";
+
+        }
+        else {
+
+            message.style.background =
+                "#eff6ff";
+
+            message.style.color =
+                "#1d4ed8";
+        }
+
+    }
+
+
+    /*
+     * =========================================
+     * START AUTOMATION
+     * =========================================
+     */
+
+    submitButton.addEventListener(
+        "click",
+        async function() {
+
+            const file =
+                fileInput.files[0];
+
+
+            if (!file) {
+
+                showMessage(
+                    "⚠️ Please select an Excel file.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (
+                !file.name
+                    .toLowerCase()
+                    .endsWith(".xlsx")
+            ) {
+
+                showMessage(
+                    "❌ Please upload an .xlsx file.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "file",
+                file
+            );
+
+
+            submitButton.disabled =
+                true;
+
+
+            submitButton.textContent =
+                "⏳ Starting...";
+
+
+            statusSection.style.display =
+                "block";
+
+
+            showMessage(
+                "📤 Uploading Excel and starting automation...",
+                "info"
+            );
+
+
+            /*
+             * Reset
+             */
+
+            totalCount.textContent =
+                "0";
+
+            passedCount.textContent =
+                "0";
+
+            failedCount.textContent =
+                "0";
+
+            pendingCount.textContent =
+                "0";
+
+            progressBar.style.width =
+                "0%";
+
+            progressText.textContent =
+                "0%";
+
+            loginStatus.textContent =
+                "🔐 Login: Pending";
+
+            logs.textContent =
+                "⏳ Waiting for automation...\n";
+
+
+            try {
+
+
+                /*
+                 * CALL MAIN.PY
+                 */
+
+                const response =
+                    await fetch(
+                        "/upload",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Server upload failed."
+                    );
+                }
+
+
+                const result =
+                    await response.json();
+
+
+                if (!result.job_id) {
+
+                    throw new Error(
+                        "Job ID not received."
+                    );
+                }
+
+
+                showMessage(
+                    "🚀 Automation started successfully.",
+                    "success"
+                );
+
+
+                /*
+                 * Start live polling
+                 */
+
+                startPolling(
+                    result.job_id
+                );
+
+
+            }
+            catch(error) {
+
+                showMessage(
+                    "❌ " + error.message,
+                    "error"
+                );
+
+
+                submitButton.disabled =
+                    false;
+
+
+                submitButton.textContent =
+                    "🚀 Start Automation";
+            }
+
+        }
+    );
+
+
+    /*
+     * =========================================
+     * POLLING
+     * =========================================
+     */
+
+    function startPolling(jobId) {
+
+
+        if (polling) {
+
+            clearInterval(
+                polling
+            );
+        }
+
+
+        /*
+         * Immediately check
+         */
+
+        getStatus(jobId);
+
+
+        /*
+         * Every 1 second
+         */
+
+        polling =
+            setInterval(
+                function() {
+
+                    getStatus(jobId);
+
+                },
+                1000
+            );
+
+    }
+
+
+    /*
+     * =========================================
+     * GET STATUS
+     * =========================================
+     */
+
+    async function getStatus(
+        jobId
+    ) {
+
+        try {
+
+            const response =
+                await fetch(
+                    `/status/${jobId}`
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to get status."
+                );
+            }
+
+
+            const data =
+                await response.json();
+
+
+            updateUI(data);
+
+
+            /*
+             * Stop when finished
+             */
+
+            if (
+                data.status ===
+                    "completed"
+                ||
+                data.status ===
+                    "failed"
+            ) {
+
+                clearInterval(
+                    polling
+                );
+
+                polling = null;
+
+
+                submitButton.disabled =
+                    false;
+
+
+                submitButton.textContent =
+                    "🚀 Start Automation";
+
+
+                if (
+                    data.status ===
+                    "completed"
+                ) {
+
+                    showMessage(
+                        "✅ Automation completed successfully.",
+                        "success"
+                    );
+
+                }
+                else {
+
+                    showMessage(
+                        "❌ Automation failed. Check the logs.",
+                        "error"
+                    );
+
+                }
+
+            }
+
+        }
+        catch(error) {
+
+            console.error(
+                error
+            );
+
+        }
+
+    }
+
+
+    /*
+     * =========================================
+     * UPDATE UI
+     * =========================================
+     */
+
+    function updateUI(
+        data
+    ) {
+
+
+        /*
+         * STATUS
+         */
+
+        const status =
+            String(
+                data.status ||
+                "unknown"
+            ).toLowerCase();
+
+
+        jobStatus.textContent =
+            status.toUpperCase();
+
+
+        /*
+         * STATUS COLOR
+         */
+
+        if (
+            status === "completed"
+        ) {
+
+            statusDot.style.background =
+                "#10b981";
+
+            statusDot.style.animation =
+                "none";
+
+        }
+        else if (
+            status === "failed"
+        ) {
+
+            statusDot.style.background =
+                "#ef4444";
+
+            statusDot.style.animation =
+                "none";
+
+        }
+        else {
+
+            statusDot.style.background =
+                "#6366f1";
+
+        }
+
+
+        /*
+         * LOGIN
+         */
+
+        const login =
+            String(
+                data.login ||
+                "pending"
+            ).toLowerCase();
+
+
+        if (
+            login === "success"
+        ) {
+
+            loginStatus.textContent =
+                "🔐 Login: ✅ Successful";
+
+            loginStatus.style.background =
+                "#ecfdf5";
+
+            loginStatus.style.color =
+                "#047857";
+
+            loginStatus.style.borderColor =
+                "#a7f3d0";
+
+        }
+        else if (
+            login === "failed"
+        ) {
+
+            loginStatus.textContent =
+                "🔐 Login: ❌ Failed";
+
+            loginStatus.style.background =
+                "#fef2f2";
+
+            loginStatus.style.color =
+                "#b91c1c";
+
+            loginStatus.style.borderColor =
+                "#fecaca";
+
+        }
+        else {
+
+            loginStatus.textContent =
+                "🔐 Login: ⏳ Pending";
+
+            loginStatus.style.background =
+                "#fffbeb";
+
+            loginStatus.style.color =
+                "#b45309";
+
+            loginStatus.style.borderColor =
+                "#fde68a";
+
+        }
+
+
+        /*
+         * COUNTS
+         */
+
+        const total =
+            Number(
+                data.total || 0
+            );
+
+
+        const passed =
+            Number(
+                data.passed || 0
+            );
+
+
+        const failed =
+            Number(
+                data.failed || 0
+            );
+
+
+        const processed =
+            passed + failed;
+
+
+        const pending =
+            Math.max(
+                total - processed,
+                0
+            );
+
+
+        totalCount.textContent =
+            total;
+
+
+        passedCount.textContent =
+            passed;
+
+
+        failedCount.textContent =
+            failed;
+
+
+        pendingCount.textContent =
+            pending;
+
+
+        /*
+         * PROGRESS
+         */
+
+        let percentage = 0;
+
+
+        if (total > 0) {
+
+            percentage =
+                Math.round(
+                    (
+                        processed /
+                        total
+                    ) * 100
+                );
+
+        }
+
+
+        progressBar.style.width =
+            percentage + "%";
+
+
+        progressText.textContent =
+            percentage + "%";
+
+
+        /*
+         * LOGS
+         */
+
+        if (
+            data.logs &&
+            data.logs.length
+        ) {
+
+            logs.textContent =
+                data.logs.join(
+                    "\n"
+                );
+
+        }
+
+
+        /*
+         * Always scroll to latest log
+         */
+
+        logs.scrollTop =
+            logs.scrollHeight;
+
+    }
+
+</script>
+
+
+</body>
+
+</html>
