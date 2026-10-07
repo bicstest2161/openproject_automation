@@ -50,6 +50,12 @@ def sitemap():
         media_type="application/xml"
     )
 
+# ============================================================
+# GC - google verification
+# ============================================================
+@app.get("/google1234567890abcdef.html")
+def google_verification():
+    return FileResponse("static/googlec4137777644ad008.html")
 
 # ============================================================
 # AUTOMATION
