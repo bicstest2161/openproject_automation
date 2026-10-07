@@ -829,52 +829,6 @@
             }
 
         }
-        /* =========================================
-   SERVER STARTUP LOADER
-========================================= */
-
-#serverLoader {
-    position: fixed;
-    inset: 0;
-    background: #f8fafc;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    z-index: 99999;
-
-    text-align: center;
-}
-
-#serverLoader h2 {
-    margin-top: 20px;
-    color: #1e293b;
-}
-
-#serverLoader p {
-    color: #64748b;
-    margin-top: 8px;
-}
-
-.loader-spinner {
-    width: 50px;
-    height: 50px;
-
-    border: 5px solid #e2e8f0;
-    border-top-color: #6366f1;
-
-    border-radius: 50%;
-
-    animation: serverSpin 0.9s linear infinite;
-}
-
-@keyframes serverSpin {
-    to {
-        transform: rotate(360deg);
-    }
-}
 
     </style>
 
@@ -883,24 +837,8 @@
 
 <body>
 
-<!-- =========================================
-     SERVER STARTUP LOADER
-========================================= -->
 
-<div id="serverLoader">
-
-    <div class="loader-spinner"></div>
-
-    <h2>🚀 Preparing Your Time Sheet Automation Workspace...</h2>
-
-    <p id="loaderMessage">
-        We're getting the automation service ready. Please wait a moment.
-    </p>
-
-</div>
-
-
-<div class="container" id="mainContainer" style="display: none;">
+<div class="container">
 
 
     <!-- =========================================
@@ -1168,120 +1106,12 @@
 
 <script>
 
-    /*
-     * =========================================
-     * WAIT FOR FASTAPI SERVER
-     * =========================================
-     */
-
-    async function waitForServer() {
-
-        const loader =
-            document.getElementById(
-                "serverLoader"
-            );
-
-        const mainContainer =
-            document.getElementById(
-                "mainContainer"
-            );
-
-        const loaderMessage =
-            document.getElementById(
-                "loaderMessage"
-            );
-
-
-        while (true) {
-
-            try {
-
-                loaderMessage.textContent =
-                    "We're getting the automation service ready. Please wait a moment.";
-
-                const response =
-                    await fetch(
-                        "/health",
-                        {
-                            method: "GET",
-                            cache: "no-store"
-                        }
-                    );
-
-                if (response.ok) {
-
-                    loaderMessage.textContent =
-                        "Server started! Loading application...";
-
-
-                    /*
-                     * Small delay so user can see
-                     * the successful startup message
-                     */
-
-                    // await new Promise(
-                    //     resolve =>
-                    //         setTimeout(
-                    //             resolve,
-                    //             500
-                    //         )
-                    // );
-
-
-                    loader.style.display =
-                        "none";
-
-                    mainContainer.style.display =
-                        "block";
-
-
-                    return;
-                }
-
-            }
-            catch (error) {
-
-                console.log(
-                    "Server is still starting..."
-                );
-
-            }
-
-
-            /*
-             * Try again after 1.5 seconds
-             */
-
-            await new Promise(
-                resolve =>
-                    setTimeout(
-                        resolve,
-                        1500
-                    )
-            );
-
-        }
-
-    }
-
-
-    /*
-     * Start checking FastAPI
-     */
-
-    waitForServer();
-
-
-    /*
-     * =========================================
-     * YOUR EXISTING CODE
-     * =========================================
-     */
 
     const fileInput =
         document.getElementById(
             "fileInput"
         );
+
 
     const submitButton =
         document.getElementById(
