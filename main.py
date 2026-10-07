@@ -53,7 +53,7 @@ def sitemap():
 # ============================================================
 # GC - google verification
 # ============================================================
-@app.get("/google1234567890abcdef.html")
+@app.get("/googlec4137777644ad008.html")
 def google_verification():
     return FileResponse("static/googlec4137777644ad008.html")
 
