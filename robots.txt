@@ -1,0 +1,7 @@
+@app.get("/robots.txt", response_class=PlainTextResponse)
+async def robots():
+    return """User-agent: *
+Allow: /
+
+Sitemap: https://openproject-automation.onrender.com/sitemap.xml
+"""
