@@ -19,6 +19,14 @@ job_status = {}
 
 
 # ============================================================
+# Loading
+# ============================================================
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+# ============================================================
 # SEO - ROBOTS.TXT
 # ============================================================
 
@@ -50,10 +58,11 @@ def sitemap():
         media_type="application/xml"
     )
 
+
 # ============================================================
 # GC - google verification
 # ============================================================
-@app.get("/googlec4137777644ad008.html")
+@app.get("/google1234567890abcdef.html")
 def google_verification():
     return FileResponse("static/googlec4137777644ad008.html")
 
