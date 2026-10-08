@@ -113,7 +113,7 @@ def run_automation(job_id: str, file_path: str):
         with sync_playwright() as p:
 
             browser = p.chromium.launch(
-                headless=True
+                headless=False
             )
 
             page = browser.new_page()
@@ -189,7 +189,7 @@ def run_automation(job_id: str, file_path: str):
             # =================================================
 
             recent_project_name = "start project-1"
-
+            recent_subject_name = "start project-1"
 
             for index, row in df.iterrows():
 
@@ -202,36 +202,53 @@ def run_automation(job_id: str, file_path: str):
                 activity = row["Activity"]
                 comment = row["Comment"]
 
-
+                import time
                 try:
 
                     # -----------------------------------------
                     # CHANGE PROJECT IF REQUIRED
                     # -----------------------------------------
-
-                    if Project_Name != recent_project_name:
-
+                    if Project_Name != recent_project_name or subject != recent_subject_name:
+                        
                         page.locator(
                             "#projects-menu"
                         ).click()
 
-
                         page.locator(
                             f"//a/span[text()='{Project_Name}']"
                         ).click()
+                        recent_project_name = Project_Name
 
+                        work_packages_menu = page.locator("#main-menu-work-packages")
 
-                        if recent_project_name == "start project-1":
-
-                            page.locator(
-                                "#main-menu-work-packages"
-                            ).click()
-
+                        if work_packages_menu.count() > 0 and work_packages_menu.first.is_visible():
+                            work_packages_menu.first.click()
 
                         page.locator(
                             "//a/span[text() = 'All open ']"
                         ).click()
 
+                        page.locator("#work-packages-filter-toggle-button").click()
+
+                        page.locator("#add_filter_select").click()
+
+                        page.locator("//div[@role='option']//span[@class='ng-option-label' and normalize-space()='Assignee']").click()
+
+                        page.locator("#values-assignee").click()
+
+                        page.locator("#values-assignee input").fill(name)
+
+                        page.locator(f"//div[@role='option' and normalize-space()='{name}']").click()
+
+                        page.locator("#add_filter_select").click()
+
+                        page.locator("//*[@id ='add_filter_select']//input").fill('Subject')
+
+                        page.locator("//div[@role='option']//span[@class='ng-option-label' and normalize-space()='Subject']").click()
+
+                        page.locator("//div[@id = 'div-values-Subject']/input").fill(subject)
+
+                        recent_subject_name = subject
 
                     # -----------------------------------------
                     # FIND WORK PACKAGE
@@ -249,36 +266,33 @@ def run_automation(job_id: str, file_path: str):
                     # -----------------------------------------
                     # ENTER TIME DETAILS
                     # -----------------------------------------
+                    if pd.notna(date):
+                        page.locator(
+                            "#wp-new-inline-edit--field-spentOn"
+                        ).fill(date)
 
-                    page.locator(
-                        "#wp-new-inline-edit--field-spentOn"
-                    ).fill(date)
+                    if pd.notna(hour):
+                        page.locator(
+                            "#wp-new-inline-edit--field-hours"
+                        ).fill(hour)
 
-
-                    page.locator(
-                        "#wp-new-inline-edit--field-hours"
-                    ).fill(hour)
-
-
-                    page.locator(
-                        "#wp-new-inline-edit--field-comment"
-                    ).fill(comment)
-
+                    if pd.notna(comment):
+                        page.locator(
+                            "#wp-new-inline-edit--field-comment"
+                        ).fill(comment)
 
                     # -----------------------------------------
                     # SELECT ACTIVITY
                     # -----------------------------------------
+                    if pd.notna(activity):
+                        page.locator(
+                            "#wp-new-inline-edit--field-activity"
+                        ).click()
 
-                    page.locator(
-                        "#wp-new-inline-edit--field-activity"
-                    ).click()
-
-
-                    page.locator(
-                        f"//span[@class='ng-option-label ellipsis' "
-                        f"and normalize-space()='{activity}']"
-                    ).click()
-
+                        page.locator(
+                            f"//span[@class='ng-option-label ellipsis' "
+                            f"and normalize-space()='{activity}']"
+                        ).click()
 
                     # -----------------------------------------
                     # SAVE
@@ -287,10 +301,6 @@ def run_automation(job_id: str, file_path: str):
                     page.locator(
                         "//button[@title='Save']"
                     ).click()
-
-
-                    recent_project_name = Project_Name
-
 
                     # -----------------------------------------
                     # SUCCESS
@@ -309,13 +319,17 @@ def run_automation(job_id: str, file_path: str):
                     # ROW FAILED
                     # -----------------------------------------
 
+                    cancel_button = page.locator("//button[normalize-space()='Cancel']")
+
+                    if cancel_button.count() > 0 and cancel_button.first.is_visible():
+                        cancel_button.first.click()
+
                     job_status[job_id]["failed"] += 1
 
                     job_status[job_id]["logs"].append(
                         f"❌ [{S_No}] {subject} | {name} | {date} — "
                         f"{str(row_err)[:80]}"
                     )
-
 
             # =================================================
             # CLOSE BROWSER
