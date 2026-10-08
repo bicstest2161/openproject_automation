@@ -113,7 +113,7 @@ def run_automation(job_id: str, file_path: str):
         with sync_playwright() as p:
 
             browser = p.chromium.launch(
-                headless=False
+                headless=True
             )
 
             page = browser.new_page()
